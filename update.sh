@@ -20,5 +20,5 @@ else
 fi
 
 mkdir -p out
-javac -d out Main.java CypherTool.java CipherKit.java HashKit.java PasswordKit.java TerminalUI.java UpdateKit.java
+javac -d out Main.java CypherTool.java CipherKit.java HashKit.java PasswordKit.java SecureCryptoKit.java TerminalUI.java UpdateKit.java
 echo "Update complete. Run ./run.sh or java -cp out cyphertool.Main"
