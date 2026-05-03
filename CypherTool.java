@@ -21,8 +21,9 @@ public class CypherTool {
                 case "1": runPlaygroundMode(); break;
                 case "2": runUtilityMode(); break;
                 case "3": runChallengeMode(); break;
-                case "4": printSecurityGuide(); break;
-                default: System.out.println("Invalid choice. Pick 1, 2, 3, 4 or 0.\n");
+                case "4": runPasswordMode(); break;
+                case "5": printSecurityGuide(); break;
+                default: System.out.println("Invalid choice. Pick 1, 2, 3, 4, 5 or 0.\n");
             }
         }
     }
@@ -38,9 +39,10 @@ public class CypherTool {
     private static void printMainMenu() {
         System.out.println("Choose mode:");
         System.out.println("1. Playground - fun ciphers and hidden messages");
-        System.out.println("2. Utility - encoders, decoders and practical tools");
+        System.out.println("2. Utility - encoders, decoders, hashes and HMAC");
         System.out.println("3. Challenge - decode a puzzle");
-        System.out.println("4. Security guide - what is safe and what is only play");
+        System.out.println("4. Passwords - generate and check password strength");
+        System.out.println("5. Security guide - what is safe and what is only play");
         System.out.println("0. Exit");
         System.out.print("> ");
     }
@@ -97,6 +99,9 @@ public class CypherTool {
             System.out.println("4. Hex decode            [Encoding only]");
             System.out.println("5. Binary encode         [Encoding only]");
             System.out.println("6. Binary decode         [Encoding only]");
+            System.out.println("7. SHA-256 hash          [One-way fingerprint]");
+            System.out.println("8. SHA-512 hash          [One-way fingerprint]");
+            System.out.println("9. HMAC-SHA256           [Message authentication]");
             System.out.println("0. Back");
             System.out.print("> ");
 
@@ -115,7 +120,51 @@ public class CypherTool {
                 case "4": explain("Hex", "Turns hexadecimal bytes back into text."); result = CipherKit.hexDecode(message); break;
                 case "5": explain("Binary", "Shows UTF-8 bytes as 8-bit binary groups."); result = CipherKit.binaryEncode(message); break;
                 case "6": explain("Binary", "Turns 8-bit binary groups back into text."); result = CipherKit.binaryDecode(message); break;
+                case "7": explain("SHA-256", "Creates a one-way fingerprint. It cannot be decrypted."); result = HashKit.sha256(message); break;
+                case "8": explain("SHA-512", "Creates a longer one-way fingerprint. It cannot be decrypted."); result = HashKit.sha512(message); break;
+                case "9":
+                    explain("HMAC-SHA256", "Uses a secret key to prove a message came from someone with that key and was not changed.");
+                    String secret = readLine("Enter HMAC secret: ");
+                    result = HashKit.hmacSha256(message, secret);
+                    break;
                 default: System.out.println("Invalid utility tool."); continue;
+            }
+            printResult(result);
+        }
+    }
+
+    private static void runPasswordMode() {
+        while (true) {
+            System.out.println("\nPassword tools:");
+            System.out.println("1. Generate password");
+            System.out.println("2. Generate passphrase");
+            System.out.println("3. Check password strength");
+            System.out.println("0. Back");
+            System.out.print("> ");
+
+            String choice = scanner.nextLine().trim();
+            if (choice.equalsIgnoreCase("exit")) return;
+            if (choice.equals("0")) return;
+
+            String result;
+            switch (choice) {
+                case "1":
+                    int length = readInt("Length, minimum 8: ");
+                    String symbolsAnswer = readLine("Include symbols? yes/no: ");
+                    result = PasswordKit.generatePassword(length, symbolsAnswer.equalsIgnoreCase("yes") || symbolsAnswer.equalsIgnoreCase("y"));
+                    explain("Password generator", "Creates a random password using Java SecureRandom.");
+                    break;
+                case "2":
+                    int words = readInt("Number of words, minimum 4: ");
+                    result = PasswordKit.generatePassphrase(words);
+                    explain("Passphrase generator", "Creates a memorable password using random words and a number.");
+                    break;
+                case "3":
+                    String password = readLine("Enter password to check: ");
+                    result = PasswordKit.strengthReport(password);
+                    explain("Password strength", "This is a local estimate, not a guarantee. Unique and long still matters most.");
+                    break;
+                default: System.out.println("Invalid password tool."); continue;
             }
             printResult(result);
         }
@@ -141,20 +190,24 @@ public class CypherTool {
         System.out.println("\nSecurity guide:");
         System.out.println("- Puzzle ciphers: ROT13, ROT47, Atbash, Caesar, Morse, A1Z26, Reverse.");
         System.out.println("- Encoding tools: Base64, Hex, Binary. Useful, but not private.");
-        System.out.println("- Real encryption: coming next. It should use authenticated encryption like AES-GCM.");
-        System.out.println("- Practical value: CypherTool should become useful for private notes, file protection, passwords, hashes, and learning.\n");
+        System.out.println("- Hash tools: SHA-256 and SHA-512 create fingerprints. They are one-way, not encryption.");
+        System.out.println("- HMAC: proves message integrity when both sides share a secret key.");
+        System.out.println("- Password tools: useful now for generating stronger local passwords and passphrases.");
+        System.out.println("- Real encryption: coming next. It should use authenticated encryption like AES-GCM.\n");
     }
 
     private static String readMessage() {
-        System.out.println("\nEnter text:");
-        System.out.print("> ");
-        String message = scanner.nextLine();
-        if (message.trim().equalsIgnoreCase("exit")) return null;
-        if (message.isEmpty()) {
-            System.out.println("Text cannot be empty.");
-            return readMessage();
+        return readLine("\nEnter text:\n> ");
+    }
+
+    private static String readLine(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String message = scanner.nextLine();
+            if (message.trim().equalsIgnoreCase("exit")) return null;
+            if (!message.isEmpty()) return message;
+            System.out.println("Input cannot be empty.");
         }
-        return message;
     }
 
     private static int readInt(String prompt) {
