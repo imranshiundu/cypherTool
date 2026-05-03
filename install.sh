@@ -26,7 +26,7 @@ fi
 
 cd "$INSTALL_DIR"
 mkdir -p out
-javac -d out Main.java CypherTool.java CipherKit.java HashKit.java PasswordKit.java TerminalUI.java UpdateKit.java
+javac -d out Main.java CypherTool.java CipherKit.java HashKit.java PasswordKit.java SecureCryptoKit.java TerminalUI.java UpdateKit.java
 
 cat > "$BIN_DIR/$APP_NAME" <<'RUNNER'
 #!/usr/bin/env bash
