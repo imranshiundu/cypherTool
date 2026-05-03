@@ -6,180 +6,183 @@ public class CypherTool {
     private static final Scanner scanner = new Scanner(System.in);
 
     public static void startProgram() {
-        System.out.println("Welcome to Our Simple Cypher Tool. It was made by Imran Shiundu, Valarie Kigen & Dennis Kiarie. We hope you enjoy using it!");
-        System.out.println("Type 'exit' whenever you want to quit.\n");
+        printWelcome();
 
         while (true) {
-            String operation = chooseOperation();
-            if (operation.equals("exit")) return;
+            printMainMenu();
+            String choice = scanner.nextLine().trim();
 
-            String cipherType = chooseCipher();
-            if (cipherType.equals("exit")) return;
-
-            String message = getMessage();
-            if (message.equals("exit")) return;
-
-            processMessage(operation, cipherType, message);
-        }
-    }
-
-    private static String chooseOperation() {
-        while (true) {
-            System.out.println("Choose operation:");
-            System.out.println("1. Encrypt");
-            System.out.println("2. Decrypt");
-            System.out.print("Your choice (1 or 2): ");
-
-            String input = scanner.nextLine().trim();
-            if (input.equalsIgnoreCase("exit")) {
-                return "exit";
+            if (choice.equalsIgnoreCase("exit") || choice.equals("0")) {
+                System.out.println("CypherTool closed. Keep your real secrets safe.");
+                return;
             }
 
-            switch (input) {
-                case "1": return "encrypt";
-                case "2": return "decrypt";
-                default: System.out.println("Invalid choice. Please enter 1 or 2.\n");
+            switch (choice) {
+                case "1": runPlaygroundMode(); break;
+                case "2": runUtilityMode(); break;
+                case "3": runChallengeMode(); break;
+                case "4": printSecurityGuide(); break;
+                default: System.out.println("Invalid choice. Pick 1, 2, 3, 4 or 0.\n");
             }
         }
     }
 
-    private static String chooseCipher() {
-        while (true) {
-            System.out.println("\nChoose cipher:");
-            System.out.println("1. ROT13");
-            System.out.println("2. Atbash");
-            System.out.println("3. Caesar (shift by 3)");
-            System.out.print("Your choice (1, 2 or 3): ");
-
-            String input = scanner.nextLine().trim();
-            if (input.equalsIgnoreCase("exit")) {
-                return "exit";
-            }
-
-            switch (input) {
-                case "1": return "rot13";
-                case "2": return "atbash";
-                case "3": return "caesar";
-                default: System.out.println("Invalid choice. Please enter 1, 2 or 3.");
-            }
-        }
+    private static void printWelcome() {
+        System.out.println("========================================");
+        System.out.println("CypherTool");
+        System.out.println("Hide messages for fun. Protect files for real. Learn the difference.");
+        System.out.println("========================================");
+        System.out.println("Type 'exit' anytime to quit.\n");
     }
 
-    private static String getMessage() {
+    private static void printMainMenu() {
+        System.out.println("Choose mode:");
+        System.out.println("1. Playground - fun ciphers and hidden messages");
+        System.out.println("2. Utility - encoders, decoders and practical tools");
+        System.out.println("3. Challenge - decode a puzzle");
+        System.out.println("4. Security guide - what is safe and what is only play");
+        System.out.println("0. Exit");
+        System.out.print("> ");
+    }
+
+    private static void runPlaygroundMode() {
         while (true) {
-            System.out.println("\nEnter your message:");
+            System.out.println("\nPlayground methods:");
+            System.out.println("1. ROT13                 [Puzzle only]");
+            System.out.println("2. ROT47                 [Puzzle only]");
+            System.out.println("3. Atbash                [Puzzle only]");
+            System.out.println("4. Caesar custom shift   [Puzzle only]");
+            System.out.println("5. Caesar brute force    [Learning tool]");
+            System.out.println("6. Morse encode          [Encoding/play]");
+            System.out.println("7. Morse decode          [Encoding/play]");
+            System.out.println("8. A1Z26 encode          [Puzzle only]");
+            System.out.println("9. Reverse text          [Puzzle only]");
+            System.out.println("0. Back");
             System.out.print("> ");
-            String message = scanner.nextLine().trim();
 
-            if (message.equalsIgnoreCase("exit")) {
-                return "exit";
+            String choice = scanner.nextLine().trim();
+            if (choice.equalsIgnoreCase("exit")) return;
+            if (choice.equals("0")) return;
+
+            String message = readMessage();
+            if (message == null) return;
+
+            String result;
+            switch (choice) {
+                case "1": explain("ROT13", "Every letter moves 13 places. It is fun, but has no key."); result = CipherKit.rot13(message); break;
+                case "2": explain("ROT47", "Rotates printable characters. Good for puzzles, not privacy."); result = CipherKit.rot47(message); break;
+                case "3": explain("Atbash", "Mirrors the alphabet: A becomes Z, B becomes Y."); result = CipherKit.atbash(message); break;
+                case "4":
+                    int shift = readInt("Shift amount: ");
+                    explain("Caesar", "Moves letters by your chosen shift. Easy to brute force.");
+                    result = CipherKit.caesar(message, shift);
+                    break;
+                case "5": explain("Caesar brute force", "Shows all 25 possible Caesar reversals so learners can see why Caesar is weak."); result = CipherKit.caesarBruteForce(message); break;
+                case "6": explain("Morse", "Turns letters and numbers into dot-dash signals."); result = CipherKit.morseEncode(message); break;
+                case "7": explain("Morse", "Turns dot-dash groups back into text. Use spaces between letters and / between words."); result = CipherKit.morseDecode(message); break;
+                case "8": explain("A1Z26", "A becomes 1, B becomes 2, Z becomes 26."); result = CipherKit.a1z26Encode(message); break;
+                case "9": explain("Reverse", "Flips the message order. Simple, visible, and only for fun."); result = CipherKit.reverse(message); break;
+                default: System.out.println("Invalid playground method."); continue;
             }
-
-            if (!message.isEmpty()) {
-                return message;
-            }
-
-            System.out.println("Message cannot be empty. Please try again.");
+            printResult(result);
         }
     }
 
-    private static void processMessage(String operation, String cipherType, String message) {
-        String result;
-        String action = operation.equals("encrypt") ? "Encrypted" : "Decrypted";
+    private static void runUtilityMode() {
+        while (true) {
+            System.out.println("\nUtility tools:");
+            System.out.println("1. Base64 encode         [Encoding only]");
+            System.out.println("2. Base64 decode         [Encoding only]");
+            System.out.println("3. Hex encode            [Encoding only]");
+            System.out.println("4. Hex decode            [Encoding only]");
+            System.out.println("5. Binary encode         [Encoding only]");
+            System.out.println("6. Binary decode         [Encoding only]");
+            System.out.println("0. Back");
+            System.out.print("> ");
 
-        switch (cipherType) {
-            case "rot13":
-                result = operation.equals("encrypt") ? encryptRot13(message) : decryptRot13(message);
-                System.out.println("\n" + action + " message (ROT13):");
-                break;
-            case "atbash":
-                result = operation.equals("encrypt") ? encryptAtbash(message) : decryptAtbash(message);
-                System.out.println("\n" + action + " message (Atbash):");
-                break;
-            case "caesar":
-                result = operation.equals("encrypt") ? encryptCaesar(message) : decryptCaesar(message);
-                System.out.println("\n" + action + " message (Caesar):");
-                break;
-            default:
-                result = "Error: Unknown cipher";
+            String choice = scanner.nextLine().trim();
+            if (choice.equalsIgnoreCase("exit")) return;
+            if (choice.equals("0")) return;
+
+            String message = readMessage();
+            if (message == null) return;
+
+            String result;
+            switch (choice) {
+                case "1": explain("Base64", "Useful when data must travel as text. It is not encryption."); result = CipherKit.base64Encode(message); break;
+                case "2": explain("Base64", "Anyone can decode Base64. Never treat it as private."); result = CipherKit.base64Decode(message); break;
+                case "3": explain("Hex", "Shows UTF-8 bytes as hexadecimal text."); result = CipherKit.hexEncode(message); break;
+                case "4": explain("Hex", "Turns hexadecimal bytes back into text."); result = CipherKit.hexDecode(message); break;
+                case "5": explain("Binary", "Shows UTF-8 bytes as 8-bit binary groups."); result = CipherKit.binaryEncode(message); break;
+                case "6": explain("Binary", "Turns 8-bit binary groups back into text."); result = CipherKit.binaryDecode(message); break;
+                default: System.out.println("Invalid utility tool."); continue;
+            }
+            printResult(result);
         }
-
-        System.out.println(result + "\n");
-        System.out.println("----------------------------------------\n");
     }
 
+    private static void runChallengeMode() {
+        System.out.println("\nChallenge: Decode this ROT13 message.");
+        String answer = "CYpherTool can be useful and fun";
+        String puzzle = CipherKit.rot13(answer);
+        System.out.println("Puzzle: " + puzzle);
+        System.out.print("Your answer: ");
+        String attempt = scanner.nextLine();
 
-    public static String encryptRot13(String s) {
-        StringBuilder result = new StringBuilder();
-        for (char c : s.toCharArray()) {
-            if (c >= 'a' && c <= 'z') {
-                char shifted = (char) (((c - 'a' + 13) % 26) + 'a');
-                result.append(shifted);
-            } else if (c >= 'A' && c <= 'Z') {
-                char shifted = (char) (((c - 'A' + 13) % 26) + 'A');
-                result.append(shifted);
-            } else {
-                result.append(c);
+        if (attempt.equalsIgnoreCase(answer)) {
+            System.out.println("Correct. You broke the puzzle.\n");
+        } else {
+            System.out.println("Not yet. Hint: ROT13 is its own reverse.");
+            System.out.println("Answer: " + answer + "\n");
+        }
+    }
+
+    private static void printSecurityGuide() {
+        System.out.println("\nSecurity guide:");
+        System.out.println("- Puzzle ciphers: ROT13, ROT47, Atbash, Caesar, Morse, A1Z26, Reverse.");
+        System.out.println("- Encoding tools: Base64, Hex, Binary. Useful, but not private.");
+        System.out.println("- Real encryption: coming next. It should use authenticated encryption like AES-GCM.");
+        System.out.println("- Practical value: CypherTool should become useful for private notes, file protection, passwords, hashes, and learning.\n");
+    }
+
+    private static String readMessage() {
+        System.out.println("\nEnter text:");
+        System.out.print("> ");
+        String message = scanner.nextLine();
+        if (message.trim().equalsIgnoreCase("exit")) return null;
+        if (message.isEmpty()) {
+            System.out.println("Text cannot be empty.");
+            return readMessage();
+        }
+        return message;
+    }
+
+    private static int readInt(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim();
+            try {
+                return Integer.parseInt(input);
+            } catch (NumberFormatException ex) {
+                System.out.println("Enter a valid whole number.");
             }
         }
-        return result.toString();
     }
 
-    public static String decryptRot13(String s) {
-        return encryptRot13(s);
+    private static void explain(String title, String explanation) {
+        System.out.println("\n" + title + ": " + explanation);
     }
 
-
-    public static String encryptAtbash(String s) {
-        StringBuilder result = new StringBuilder();
-        for (char c : s.toCharArray()) {
-            if (c >= 'a' && c <= 'z') {
-                char flipped = (char) ('z' - (c - 'a'));
-                result.append(flipped);
-            } else if (c >= 'A' && c <= 'Z') {
-                char flipped = (char) ('Z' - (c - 'A'));
-                result.append(flipped);
-            } else {
-                result.append(c);
-            }
-        }
-        return result.toString();
+    private static void printResult(String result) {
+        System.out.println("\nResult:");
+        System.out.println(result);
+        System.out.println("\n----------------------------------------\n");
     }
 
-    public static String decryptAtbash(String s) {
-        return encryptAtbash(s);
-    }
-
-
-    public static String encryptCaesar(String s) {
-        StringBuilder result = new StringBuilder();
-        for (char c : s.toCharArray()) {
-            if (c >= 'a' && c <= 'z') {
-                char shifted = (char) (((c - 'a' + 3) % 26) + 'a');
-                result.append(shifted);
-            } else if (c >= 'A' && c <= 'Z') {
-                char shifted = (char) (((c - 'A' + 3) % 26) + 'A');
-                result.append(shifted);
-            } else {
-                result.append(c);
-            }
-        }
-        return result.toString();
-    }
-
-    public static String decryptCaesar(String s) {
-        StringBuilder result = new StringBuilder();
-        for (char c : s.toCharArray()) {
-            if (c >= 'a' && c <= 'z') {
-                char shifted = (char) (((c - 'a' + 23) % 26) + 'a');
-                result.append(shifted);
-            } else if (c >= 'A' && c <= 'Z') {
-                char shifted = (char) (((c - 'A' + 23) % 26) + 'A');
-                result.append(shifted);
-            } else {
-                result.append(c);
-            }
-        }
-        return result.toString();
-    }
+    public static String encryptRot13(String s) { return CipherKit.rot13(s); }
+    public static String decryptRot13(String s) { return CipherKit.rot13(s); }
+    public static String encryptAtbash(String s) { return CipherKit.atbash(s); }
+    public static String decryptAtbash(String s) { return CipherKit.atbash(s); }
+    public static String encryptCaesar(String s) { return CipherKit.caesar(s, 3); }
+    public static String decryptCaesar(String s) { return CipherKit.caesar(s, -3); }
 }
