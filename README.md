@@ -2,23 +2,24 @@
 
 CypherTool is growing from a simple Java cipher exercise into a playful cryptography playground and a useful offline privacy toolkit.
 
-It should help people do three things:
+It helps people do three things:
 
 1. **Play** with secret messages, puzzles, and classic ciphers.
 2. **Learn** how encryption, encoding, hashing, and ciphers differ.
-3. **Use** practical tools such as encoders, hashes, password generators, and modern authenticated encryption.
+3. **Use** practical offline tools such as encoders, hashes, HMAC, password generators, and modern authenticated encryption.
 
 > Hide messages for fun. Protect files for real. Learn the difference.
 
 ## Current version
 
-The current Java console app now has five modes:
+CypherTool now has a larger terminal presentation and six main menu areas:
 
 - **Playground** - fun ciphers and hidden-message tools.
 - **Utility** - practical encoders, decoders, hashes, and HMAC.
-- **Challenge** - a small puzzle mode.
 - **Passwords** - local password generator, passphrase generator, and strength checker.
-- **Security guide** - plain-English guidance on what is safe and what is only play.
+- **Challenge** - a small puzzle mode.
+- **Security Guide** - plain-English guidance on what is safe and what is only play.
+- **Updates** - official source and release announcement guidance.
 
 Implemented methods and tools:
 
@@ -49,6 +50,8 @@ The source is now split between:
 - `CipherKit.java` - reusable cipher and encoding methods
 - `HashKit.java` - SHA-256, SHA-512, and HMAC-SHA256
 - `PasswordKit.java` - password generation, passphrase generation, and strength reports
+- `TerminalUI.java` - terminal banner, cards, and menu presentation
+- `UpdateKit.java` - safe update/source information
 
 ## Why people would use this
 
@@ -61,6 +64,71 @@ CypherTool should not only be a classroom exercise. The useful side is:
 - generate memorable passphrases
 - check weak passwords locally without sending them anywhere
 - learn why toy ciphers are weak by actually using and breaking them
+- run locally without creating an account or trusting a random website
+
+## Install
+
+### Linux/macOS-style install
+
+```bash
+chmod +x install.sh
+./install.sh
+```
+
+After installation, run:
+
+```bash
+cyphertool
+```
+
+The installer places the app in:
+
+```text
+~/.local/share/cyphertool
+```
+
+and creates a launcher in:
+
+```text
+~/.local/bin/cyphertool
+```
+
+### Run from the repo
+
+```bash
+chmod +x run.sh
+./run.sh
+```
+
+Manual compile/run:
+
+```bash
+javac -d out Main.java CypherTool.java CipherKit.java HashKit.java PasswordKit.java TerminalUI.java UpdateKit.java
+java -cp out cyphertool.Main
+```
+
+## Updates
+
+Safe update from a cloned repo:
+
+```bash
+chmod +x update.sh
+./update.sh
+```
+
+Telegram can be used for release announcements, but CypherTool should **not** auto-run code from Telegram messages. That would be unsafe. Updates should come from the official GitHub repository and should be pulled, reviewed, and compiled locally.
+
+Announcement channel placeholder:
+
+```text
+https://t.me/cyphertool_updates
+```
+
+Official source:
+
+```text
+https://github.com/imranshiundu/cypherTool
+```
 
 ## Upgrade target
 
@@ -160,18 +228,8 @@ A serious mode for private notes and file encryption, with clear warnings and sa
 ## Requirements
 
 - Java 11 or newer
+- Git for install/update scripts
 - Terminal or command prompt
-
-## Run
-
-From the repository root:
-
-```bash
-javac -d out Main.java CypherTool.java CipherKit.java HashKit.java PasswordKit.java
-java -cp out cyphertool.Main
-```
-
-Type `exit` at the prompts to close the program.
 
 ## Documentation
 
