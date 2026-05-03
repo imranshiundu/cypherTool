@@ -20,46 +20,47 @@ public class CypherTool {
             switch (choice) {
                 case "1": runPlaygroundMode(); break;
                 case "2": runUtilityMode(); break;
-                case "3": runChallengeMode(); break;
-                case "4": runPasswordMode(); break;
+                case "3": runPasswordMode(); break;
+                case "4": runChallengeMode(); break;
                 case "5": printSecurityGuide(); break;
-                default: System.out.println("Invalid choice. Pick 1, 2, 3, 4, 5 or 0.\n");
+                case "6": printUpdates(); break;
+                default: System.out.println("Invalid choice. Pick 1-6 or 0.\n");
             }
         }
     }
 
     private static void printWelcome() {
-        System.out.println("========================================");
-        System.out.println("CypherTool");
-        System.out.println("Hide messages for fun. Protect files for real. Learn the difference.");
-        System.out.println("========================================");
+        TerminalUI.banner();
         System.out.println("Type 'exit' anytime to quit.\n");
     }
 
     private static void printMainMenu() {
-        System.out.println("Choose mode:");
-        System.out.println("1. Playground - fun ciphers and hidden messages");
-        System.out.println("2. Utility - encoders, decoders, hashes and HMAC");
-        System.out.println("3. Challenge - decode a puzzle");
-        System.out.println("4. Passwords - generate and check password strength");
-        System.out.println("5. Security guide - what is safe and what is only play");
-        System.out.println("0. Exit");
+        TerminalUI.section("Main Menu");
+        TerminalUI.card("1", "Playground", "PUZZLE + LEARNING", "Classic ciphers, hidden messages, brute-force demos");
+        TerminalUI.card("2", "Utility", "DEV + DATA TOOLS", "Base64, Hex, Binary, SHA hashes, HMAC");
+        TerminalUI.card("3", "Passwords", "LOCAL SAFETY", "Generate passwords, passphrases, check strength");
+        TerminalUI.card("4", "Challenge", "GAME MODE", "Decode puzzles and learn by breaking ciphers");
+        TerminalUI.card("5", "Security Guide", "TRUTH LAYER", "Know what is safe and what is just play");
+        TerminalUI.card("6", "Updates", "RELEASE INFO", "GitHub source and Telegram announcement channel");
+        TerminalUI.card("0", "Exit", "", "Close CypherTool");
+        TerminalUI.thinLine();
         System.out.print("> ");
     }
 
     private static void runPlaygroundMode() {
         while (true) {
-            System.out.println("\nPlayground methods:");
-            System.out.println("1. ROT13                 [Puzzle only]");
-            System.out.println("2. ROT47                 [Puzzle only]");
-            System.out.println("3. Atbash                [Puzzle only]");
-            System.out.println("4. Caesar custom shift   [Puzzle only]");
-            System.out.println("5. Caesar brute force    [Learning tool]");
-            System.out.println("6. Morse encode          [Encoding/play]");
-            System.out.println("7. Morse decode          [Encoding/play]");
-            System.out.println("8. A1Z26 encode          [Puzzle only]");
-            System.out.println("9. Reverse text          [Puzzle only]");
-            System.out.println("0. Back");
+            TerminalUI.section("Playground - Fun Ciphers");
+            TerminalUI.card("1", "ROT13", "Puzzle only", "Letter rotation by 13");
+            TerminalUI.card("2", "ROT47", "Puzzle only", "Printable character rotation");
+            TerminalUI.card("3", "Atbash", "Puzzle only", "Alphabet mirror");
+            TerminalUI.card("4", "Caesar", "Puzzle only", "Custom shift");
+            TerminalUI.card("5", "Caesar Break", "Learning", "Show all possible Caesar reversals");
+            TerminalUI.card("6", "Morse Encode", "Signal play", "Text to dot-dash");
+            TerminalUI.card("7", "Morse Decode", "Signal play", "Dot-dash back to text");
+            TerminalUI.card("8", "A1Z26", "Puzzle only", "A=1, B=2, C=3");
+            TerminalUI.card("9", "Reverse", "Puzzle only", "Flip text order");
+            TerminalUI.card("0", "Back", "", "Return to main menu");
+            TerminalUI.thinLine();
             System.out.print("> ");
 
             String choice = scanner.nextLine().trim();
@@ -92,17 +93,18 @@ public class CypherTool {
 
     private static void runUtilityMode() {
         while (true) {
-            System.out.println("\nUtility tools:");
-            System.out.println("1. Base64 encode         [Encoding only]");
-            System.out.println("2. Base64 decode         [Encoding only]");
-            System.out.println("3. Hex encode            [Encoding only]");
-            System.out.println("4. Hex decode            [Encoding only]");
-            System.out.println("5. Binary encode         [Encoding only]");
-            System.out.println("6. Binary decode         [Encoding only]");
-            System.out.println("7. SHA-256 hash          [One-way fingerprint]");
-            System.out.println("8. SHA-512 hash          [One-way fingerprint]");
-            System.out.println("9. HMAC-SHA256           [Message authentication]");
-            System.out.println("0. Back");
+            TerminalUI.section("Utility - Useful Offline Tools");
+            TerminalUI.card("1", "Base64 Encode", "Encoding", "Text to Base64");
+            TerminalUI.card("2", "Base64 Decode", "Encoding", "Base64 to text");
+            TerminalUI.card("3", "Hex Encode", "Encoding", "Text to hexadecimal");
+            TerminalUI.card("4", "Hex Decode", "Encoding", "Hexadecimal to text");
+            TerminalUI.card("5", "Binary Encode", "Encoding", "Text to 8-bit binary");
+            TerminalUI.card("6", "Binary Decode", "Encoding", "8-bit binary to text");
+            TerminalUI.card("7", "SHA-256", "Fingerprint", "One-way hash");
+            TerminalUI.card("8", "SHA-512", "Fingerprint", "Longer one-way hash");
+            TerminalUI.card("9", "HMAC-SHA256", "Integrity", "Message check with a shared secret");
+            TerminalUI.card("0", "Back", "", "Return to main menu");
+            TerminalUI.thinLine();
             System.out.print("> ");
 
             String choice = scanner.nextLine().trim();
@@ -125,7 +127,7 @@ public class CypherTool {
                 case "9":
                     explain("HMAC-SHA256", "Uses a secret key to prove a message came from someone with that key and was not changed.");
                     String secret = readLine("Enter HMAC secret: ");
-                    result = HashKit.hmacSha256(message, secret);
+                    result = secret == null ? "Cancelled." : HashKit.hmacSha256(message, secret);
                     break;
                 default: System.out.println("Invalid utility tool."); continue;
             }
@@ -135,11 +137,12 @@ public class CypherTool {
 
     private static void runPasswordMode() {
         while (true) {
-            System.out.println("\nPassword tools:");
-            System.out.println("1. Generate password");
-            System.out.println("2. Generate passphrase");
-            System.out.println("3. Check password strength");
-            System.out.println("0. Back");
+            TerminalUI.section("Passwords - Local Safety Tools");
+            TerminalUI.card("1", "Password", "Generate", "Random password using SecureRandom");
+            TerminalUI.card("2", "Passphrase", "Generate", "Memorable word-based password");
+            TerminalUI.card("3", "Strength", "Check", "Local password strength report");
+            TerminalUI.card("0", "Back", "", "Return to main menu");
+            TerminalUI.thinLine();
             System.out.print("> ");
 
             String choice = scanner.nextLine().trim();
@@ -151,7 +154,7 @@ public class CypherTool {
                 case "1":
                     int length = readInt("Length, minimum 8: ");
                     String symbolsAnswer = readLine("Include symbols? yes/no: ");
-                    result = PasswordKit.generatePassword(length, symbolsAnswer.equalsIgnoreCase("yes") || symbolsAnswer.equalsIgnoreCase("y"));
+                    result = PasswordKit.generatePassword(length, symbolsAnswer != null && (symbolsAnswer.equalsIgnoreCase("yes") || symbolsAnswer.equalsIgnoreCase("y")));
                     explain("Password generator", "Creates a random password using Java SecureRandom.");
                     break;
                 case "2":
@@ -161,7 +164,7 @@ public class CypherTool {
                     break;
                 case "3":
                     String password = readLine("Enter password to check: ");
-                    result = PasswordKit.strengthReport(password);
+                    result = password == null ? "Cancelled." : PasswordKit.strengthReport(password);
                     explain("Password strength", "This is a local estimate, not a guarantee. Unique and long still matters most.");
                     break;
                 default: System.out.println("Invalid password tool."); continue;
@@ -171,8 +174,9 @@ public class CypherTool {
     }
 
     private static void runChallengeMode() {
-        System.out.println("\nChallenge: Decode this ROT13 message.");
-        String answer = "CYpherTool can be useful and fun";
+        TerminalUI.section("Challenge Mode");
+        System.out.println("Decode this ROT13 message.");
+        String answer = "CypherTool can be useful and fun";
         String puzzle = CipherKit.rot13(answer);
         System.out.println("Puzzle: " + puzzle);
         System.out.print("Your answer: ");
@@ -187,13 +191,22 @@ public class CypherTool {
     }
 
     private static void printSecurityGuide() {
-        System.out.println("\nSecurity guide:");
-        System.out.println("- Puzzle ciphers: ROT13, ROT47, Atbash, Caesar, Morse, A1Z26, Reverse.");
-        System.out.println("- Encoding tools: Base64, Hex, Binary. Useful, but not private.");
-        System.out.println("- Hash tools: SHA-256 and SHA-512 create fingerprints. They are one-way, not encryption.");
-        System.out.println("- HMAC: proves message integrity when both sides share a secret key.");
-        System.out.println("- Password tools: useful now for generating stronger local passwords and passphrases.");
-        System.out.println("- Real encryption: coming next. It should use authenticated encryption like AES-GCM.\n");
+        TerminalUI.section("Security Guide");
+        System.out.println("Puzzle ciphers: ROT13, ROT47, Atbash, Caesar, Morse, A1Z26, Reverse.");
+        System.out.println("Encoding tools: Base64, Hex, Binary. Useful, but not private.");
+        System.out.println("Hash tools: SHA-256 and SHA-512 create fingerprints. They are one-way, not encryption.");
+        System.out.println("HMAC: proves message integrity when both sides share a secret key.");
+        System.out.println("Password tools: useful now for generating stronger local passwords and passphrases.");
+        System.out.println("Real encryption: planned next. It should use authenticated encryption like AES-GCM.");
+        TerminalUI.thinLine();
+        System.out.println();
+    }
+
+    private static void printUpdates() {
+        TerminalUI.section("Updates");
+        System.out.println(UpdateKit.updateMessage());
+        TerminalUI.thinLine();
+        System.out.println();
     }
 
     private static String readMessage() {
@@ -229,7 +242,9 @@ public class CypherTool {
     private static void printResult(String result) {
         System.out.println("\nResult:");
         System.out.println(result);
-        System.out.println("\n----------------------------------------\n");
+        System.out.println();
+        TerminalUI.thinLine();
+        System.out.println();
     }
 
     public static String encryptRot13(String s) { return CipherKit.rot13(s); }
