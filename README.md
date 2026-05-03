@@ -12,16 +12,17 @@ It should help people do three things:
 
 ## Current version
 
-The current Java console app now has four modes:
+The current Java console app now has five modes:
 
 - **Playground** - fun ciphers and hidden-message tools.
-- **Utility** - practical encoders and decoders.
+- **Utility** - practical encoders, decoders, hashes, and HMAC.
 - **Challenge** - a small puzzle mode.
+- **Passwords** - local password generator, passphrase generator, and strength checker.
 - **Security guide** - plain-English guidance on what is safe and what is only play.
 
-Implemented methods:
+Implemented methods and tools:
 
-| Method | Category | Secure for real secrets? | Status |
+| Method / Tool | Category | Secure for real secrets? | Status |
 |---|---:|---:|---|
 | ROT13 | Classical substitution | No | Implemented |
 | ROT47 | Classical rotation | No | Implemented |
@@ -34,12 +35,32 @@ Implemented methods:
 | Base64 encode/decode | Encoding | No | Implemented |
 | Hex encode/decode | Encoding | No | Implemented |
 | Binary encode/decode | Encoding | No | Implemented |
+| SHA-256 | Hash/fingerprint | One-way, not encryption | Implemented |
+| SHA-512 | Hash/fingerprint | One-way, not encryption | Implemented |
+| HMAC-SHA256 | Message authentication | Useful with shared secret | Implemented |
+| Random password generator | Password utility | Useful | Implemented |
+| Passphrase generator | Password utility | Useful | Implemented |
+| Password strength checker | Password utility | Estimate only | Implemented |
 
 The source is now split between:
 
 - `Main.java` - entry point
 - `CypherTool.java` - console app flow
 - `CipherKit.java` - reusable cipher and encoding methods
+- `HashKit.java` - SHA-256, SHA-512, and HMAC-SHA256
+- `PasswordKit.java` - password generation, passphrase generation, and strength reports
+
+## Why people would use this
+
+CypherTool should not only be a classroom exercise. The useful side is:
+
+- quickly encode/decode Base64, Hex, and Binary text offline
+- generate hashes for text fingerprints and checksums
+- create HMAC signatures for simple integrity checks
+- generate strong passwords without visiting a website
+- generate memorable passphrases
+- check weak passwords locally without sending them anywhere
+- learn why toy ciphers are weak by actually using and breaking them
 
 ## Upgrade target
 
@@ -126,7 +147,11 @@ A puzzle mode where users decode messages, get hints, and build scores.
 
 ### Utility mode
 
-A practical mode for Base64, Hex, Binary, future URL encoding, hashes, password generation, and text conversions.
+A practical mode for Base64, Hex, Binary, hashes, HMAC, future URL encoding, and text conversions.
+
+### Password mode
+
+A local mode for generating strong passwords, memorable passphrases, and checking password strength.
 
 ### Secure mode
 
@@ -142,7 +167,7 @@ A serious mode for private notes and file encryption, with clear warnings and sa
 From the repository root:
 
 ```bash
-javac -d out Main.java CypherTool.java CipherKit.java
+javac -d out Main.java CypherTool.java CipherKit.java HashKit.java PasswordKit.java
 java -cp out cyphertool.Main
 ```
 
