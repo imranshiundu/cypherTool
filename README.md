@@ -12,15 +12,34 @@ It should help people do three things:
 
 ## Current version
 
-The current Java console app supports:
+The current Java console app now has four modes:
 
-| Method | Category | Secure for real secrets? | What it teaches |
+- **Playground** - fun ciphers and hidden-message tools.
+- **Utility** - practical encoders and decoders.
+- **Challenge** - a small puzzle mode.
+- **Security guide** - plain-English guidance on what is safe and what is only play.
+
+Implemented methods:
+
+| Method | Category | Secure for real secrets? | Status |
 |---|---:|---:|---|
-| ROT13 | Classical substitution | No | Letter rotation and reversible transformations |
-| Atbash | Classical substitution | No | Alphabet mirroring |
-| Caesar shift by 3 | Classical substitution | No | Shift ciphers and brute-force weakness |
+| ROT13 | Classical substitution | No | Implemented |
+| ROT47 | Classical rotation | No | Implemented |
+| Atbash | Classical substitution | No | Implemented |
+| Caesar custom shift | Classical substitution | No | Implemented |
+| Caesar brute-force viewer | Learning tool | No | Implemented |
+| Morse encode/decode | Encoding/play | No | Implemented |
+| A1Z26 | Puzzle cipher | No | Implemented |
+| Reverse text | Puzzle tool | No | Implemented |
+| Base64 encode/decode | Encoding | No | Implemented |
+| Hex encode/decode | Encoding | No | Implemented |
+| Binary encode/decode | Encoding | No | Implemented |
 
-The current implementation lives mainly in `CypherTool.java`, with `Main.java` as the entry point.
+The source is now split between:
+
+- `Main.java` - entry point
+- `CypherTool.java` - console app flow
+- `CipherKit.java` - reusable cipher and encoding methods
 
 ## Upgrade target
 
@@ -107,11 +126,11 @@ A puzzle mode where users decode messages, get hints, and build scores.
 
 ### Utility mode
 
-A practical mode for Base64, URL encoding, hashes, password generation, and text conversions.
+A practical mode for Base64, Hex, Binary, future URL encoding, hashes, password generation, and text conversions.
 
 ### Secure mode
 
-A serious mode for private notes and file encryption, with clear warnings and safe defaults.
+A serious mode for private notes and file encryption, with clear warnings and safe defaults. This is planned next.
 
 ## Requirements
 
@@ -123,7 +142,7 @@ A serious mode for private notes and file encryption, with clear warnings and sa
 From the repository root:
 
 ```bash
-javac -d out Main.java CypherTool.java
+javac -d out Main.java CypherTool.java CipherKit.java
 java -cp out cyphertool.Main
 ```
 
