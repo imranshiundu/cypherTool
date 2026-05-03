@@ -18,13 +18,14 @@ public class CypherTool {
             }
 
             switch (choice) {
-                case "1": runPlaygroundMode(); break;
-                case "2": runUtilityMode(); break;
-                case "3": runPasswordMode(); break;
-                case "4": runChallengeMode(); break;
-                case "5": printSecurityGuide(); break;
-                case "6": printUpdates(); break;
-                default: System.out.println("Invalid choice. Pick 1-6 or 0.\n");
+                case "1": runSecureMode(); break;
+                case "2": runPlaygroundMode(); break;
+                case "3": runUtilityMode(); break;
+                case "4": runPasswordMode(); break;
+                case "5": runChallengeMode(); break;
+                case "6": printSecurityGuide(); break;
+                case "7": printUpdates(); break;
+                default: System.out.println("Invalid choice. Pick 1-7 or 0.\n");
             }
         }
     }
@@ -36,15 +37,64 @@ public class CypherTool {
 
     private static void printMainMenu() {
         TerminalUI.section("Main Menu");
-        TerminalUI.card("1", "Playground", "PUZZLE + LEARNING", "Classic ciphers, hidden messages, brute-force demos");
-        TerminalUI.card("2", "Utility", "DEV + DATA TOOLS", "Base64, Hex, Binary, SHA hashes, HMAC");
-        TerminalUI.card("3", "Passwords", "LOCAL SAFETY", "Generate passwords, passphrases, check strength");
-        TerminalUI.card("4", "Challenge", "GAME MODE", "Decode puzzles and learn by breaking ciphers");
-        TerminalUI.card("5", "Security Guide", "TRUTH LAYER", "Know what is safe and what is just play");
-        TerminalUI.card("6", "Updates", "RELEASE INFO", "GitHub source and Telegram announcement channel");
+        TerminalUI.card("1", "Secure Mode", "REAL ENCRYPTION", "AES-GCM private text encryption and decryption");
+        TerminalUI.card("2", "Playground", "PUZZLE + LEARNING", "Classic ciphers, hidden messages, brute-force demos");
+        TerminalUI.card("3", "Utility", "DEV + DATA TOOLS", "Base64, Hex, Binary, SHA hashes, HMAC");
+        TerminalUI.card("4", "Passwords", "LOCAL SAFETY", "Generate passwords, passphrases, check strength");
+        TerminalUI.card("5", "Challenge", "GAME MODE", "Decode puzzles and learn by breaking ciphers");
+        TerminalUI.card("6", "Security Guide", "TRUTH LAYER", "Know what is safe and what is just play");
+        TerminalUI.card("7", "Updates", "RELEASE INFO", "GitHub source and Telegram announcement channel");
         TerminalUI.card("0", "Exit", "", "Close CypherTool");
         TerminalUI.thinLine();
         System.out.print("> ");
+    }
+
+    private static void runSecureMode() {
+        while (true) {
+            TerminalUI.section("Secure Mode - Authenticated Encryption");
+            TerminalUI.card("1", "AES-GCM Encrypt", "Tier 3", "Encrypt private text with password-derived 256-bit key");
+            TerminalUI.card("2", "AES-GCM Decrypt", "Tier 3", "Decrypt CypherTool AES-GCM package");
+            TerminalUI.card("3", "Generate Key", "Secure random", "Generate a 256-bit random key as Base64");
+            TerminalUI.card("4", "Crypto Profile", "Audit info", "Show AES-GCM/KDF/security parameters");
+            TerminalUI.card("0", "Back", "", "Return to main menu");
+            TerminalUI.thinLine();
+            System.out.print("> ");
+
+            String choice = scanner.nextLine().trim();
+            if (choice.equalsIgnoreCase("exit")) return;
+            if (choice.equals("0")) return;
+
+            String result;
+            switch (choice) {
+                case "1":
+                    explain("AES-GCM Encrypt", "This uses authenticated encryption. If the encrypted package is changed, decryption should fail.");
+                    String plaintext = readLine("Enter private text to encrypt:\n> ");
+                    if (plaintext == null) return;
+                    String encPassword = readLine("Enter strong password. If you lose it, CypherTool cannot recover the text:\n> ");
+                    if (encPassword == null) return;
+                    result = SecureCryptoKit.encryptTextAesGcm(plaintext, encPassword);
+                    break;
+                case "2":
+                    explain("AES-GCM Decrypt", "Paste a CypherTool AES-GCM package and the correct password.");
+                    String encrypted = readLine("Paste encrypted package:\n> ");
+                    if (encrypted == null) return;
+                    String decPassword = readLine("Enter password:\n> ");
+                    if (decPassword == null) return;
+                    result = SecureCryptoKit.decryptTextAesGcm(encrypted, decPassword);
+                    break;
+                case "3":
+                    explain("Secure random key", "This generates 32 random bytes encoded as Base64. Store it safely if you use it.");
+                    result = SecureCryptoKit.generateAesKeyBase64();
+                    break;
+                case "4":
+                    result = SecureCryptoKit.securityProfile();
+                    break;
+                default:
+                    System.out.println("Invalid secure-mode tool.");
+                    continue;
+            }
+            printResult(result);
+        }
     }
 
     private static void runPlaygroundMode() {
@@ -197,7 +247,8 @@ public class CypherTool {
         System.out.println("Hash tools: SHA-256 and SHA-512 create fingerprints. They are one-way, not encryption.");
         System.out.println("HMAC: proves message integrity when both sides share a secret key.");
         System.out.println("Password tools: useful now for generating stronger local passwords and passphrases.");
-        System.out.println("Real encryption: planned next. It should use authenticated encryption like AES-GCM.");
+        System.out.println("Secure Mode: AES-GCM gives authenticated encryption for private text when used with a strong password.");
+        System.out.println("Future hardening: file encryption, ChaCha20-Poly1305, signed releases, and formal tests.");
         TerminalUI.thinLine();
         System.out.println();
     }
